@@ -40,6 +40,46 @@ internal static class LamaWatcher
         }
     }
 
+    /// <summary>
+    /// Test hotkey Ctrl+2: charm every lama of the running objective that is still outside the pen
+    /// (<see cref="TestCharmRule"/>), so the decharm can be tested without waiting for the game's charmed variant.
+    /// </summary>
+    public static void CharmForTest(float now)
+    {
+        _nextLookup = 0f; // look now, even if the objective was started a moment ago
+        var herd = CurrentObjective(now);
+        var list = herd == null ? null : herd.currentHerdingTargets;
+        if (list == null)
+        {
+            ModLog.Info("Ctrl+2: no running herding objective.");
+            return;
+        }
+
+        int charmed = 0;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var target = list[i];
+            if (target == null || !target.isActiveAndEnabled) continue;
+            try
+            {
+                var lama = LamaSnapshot.Read(target);
+                if (!TestCharmRule.ShouldCharm(lama)) continue;
+                ModLog.StepOnce("test-charm", "first test charm: SetWillFollowHerders(true)");
+                target.SetWillFollowHerders(true);
+                ModLog.StepOnce("test-charm-ok", "first test charm: SetWillFollowHerders(true) ok");
+                Decharmed.Remove(lama.Id); // charmed again, so it can be decharmed again
+                charmed++;
+            }
+            catch (Exception ex)
+            {
+                ModLog.Warn($"Ctrl+2: charming a lama failed: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        ModLog.Info($"Ctrl+2: charmed {charmed} of {list.Count} lama(s); the others are in the pen, already charmed or " +
+                    "not ours. No lamas yet? They spawn a moment after the objective starts: press again.");
+    }
+
     /// <summary>The running herding objective, or null. Looks for a new one at most every 2 s.</summary>
     private static HerdingObjectiveManager? CurrentObjective(float now)
     {

@@ -17,6 +17,9 @@ mod, a charmed lama that is inside the pen loses its charm and stays there like 
 
 - `General.Enabled` (true): turn the mod off without uninstalling it.
 - `Debug.LogLamas` (true): log every lama's state changes to `BepInEx/SpellBrigadeLamaPen.log`.
+- `Debug.TestHotkeys` (true): for testing, as host inside a run. **Ctrl+1** starts a herding objective (when no
+  objective is running); **Ctrl+2** charms that objective's lamas that are still outside the pen. Turn off for normal
+  play.
 
 ## Build
 

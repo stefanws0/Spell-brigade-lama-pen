@@ -7,6 +7,7 @@ internal static class ModConfig
 {
     public static ConfigEntry<bool> Enabled = null!;
     public static ConfigEntry<bool> LogLamas = null!;
+    public static ConfigEntry<bool> TestHotkeys = null!;
 
     public static void Init(ConfigFile cfg)
     {
@@ -17,5 +18,8 @@ internal static class ModConfig
         LogLamas = cfg.Bind("Debug", "LogLamas", true,
             "Write a line to BepInEx/SpellBrigadeLamaPen.log when a lama first shows up and whenever its state, pen or " +
             "charm changes. Decharms are always logged.");
+        TestHotkeys = cfg.Bind("Debug", "TestHotkeys", true,
+            "For testing, host only, inside a run: Ctrl+1 starts a herding objective (when no objective is running); " +
+            "Ctrl+2 charms that objective's lamas that are still outside the pen. Turn off for normal play.");
     }
 }

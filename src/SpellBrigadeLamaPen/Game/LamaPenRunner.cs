@@ -15,13 +15,23 @@ public class LamaPenRunner : MonoBehaviour
 
     public void Update()
     {
+        var now = Time.unscaledTime;
         try
         {
-            LamaWatcher.Update(Time.unscaledTime);
+            LamaWatcher.Update(now);
         }
         catch (Exception ex)
         {
-            ModLog.ErrorThrottled("runner", ex, Time.unscaledTime);
+            ModLog.ErrorThrottled("runner", ex, now);
+        }
+
+        try
+        {
+            TestHotkeys.Update(now);
+        }
+        catch (Exception ex)
+        {
+            ModLog.ErrorThrottled("hotkeys", ex, now);
         }
     }
 
