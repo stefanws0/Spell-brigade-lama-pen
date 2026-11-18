@@ -155,7 +155,7 @@ internal static class LamaWatcher
         if (!lama.IsOwner)
             ModLog.InfoOnce("not-host", "Not the host: the lamas' AI runs on the host's PC, so this mod leaves them alone here.");
 
-        if (Walks.ShouldStop(lama.Id, lama.State, now)) StopStuckWalk(target, lama.Id);
+        if (Walks.ShouldStop(lama, now)) StopStuckWalk(target, lama.Id);
 
         if (!DecharmRule.ShouldDecharm(lama, Decharmed.Contains(lama.Id))) return;
         Decharmed.Add(lama.Id); // before the calls, so a failing decharm is not retried every tick
