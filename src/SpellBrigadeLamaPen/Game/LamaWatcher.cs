@@ -48,10 +48,16 @@ internal static class LamaWatcher
     {
         _nextLookup = 0f; // look now, even if the objective was started a moment ago
         var herd = CurrentObjective(now);
-        var list = herd == null ? null : herd.currentHerdingTargets;
-        if (list == null)
+        if (herd == null)
         {
             ModLog.Info("Ctrl+2: no running herding objective.");
+            return;
+        }
+
+        var list = herd.currentHerdingTargets;
+        if (list == null)
+        {
+            ModLog.Info("Ctrl+2: the herding objective has no lama list yet; press again in a moment.");
             return;
         }
 
@@ -62,11 +68,15 @@ internal static class LamaWatcher
             if (target == null || !target.isActiveAndEnabled) continue;
             try
             {
+                ModLog.StepOnce("read", "first read of a HerdingTarget");
                 var lama = LamaSnapshot.Read(target);
+                ModLog.StepOnce("read-done", "first read of a HerdingTarget done");
                 if (!TestCharmRule.ShouldCharm(lama)) continue;
-                ModLog.StepOnce("test-charm", "first test charm: SetWillFollowHerders(true)");
+                ModLog.StepOnce("test-charm", "first test charm: SetWillFollowHerders(true) + SetIsLoving(true)");
                 target.SetWillFollowHerders(true);
-                ModLog.StepOnce("test-charm-ok", "first test charm: SetWillFollowHerders(true) ok");
+                var animation = target.GetAnimationPlayer();
+                if (animation != null) animation.SetIsLoving(true); // hearts, so you can see which lamas were charmed
+                ModLog.StepOnce("test-charm-ok", "first test charm ok");
                 Decharmed.Remove(lama.Id); // charmed again, so it can be decharmed again
                 charmed++;
             }
