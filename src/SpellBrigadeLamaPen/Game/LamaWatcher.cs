@@ -17,6 +17,7 @@ internal static class LamaWatcher
 
     private static readonly HashSet<int> Decharmed = new();
     private static readonly LamaChanges Changes = new();
+    private static readonly WalkWatchdog Walks = new();
     private static HerdingObjectiveManager? _herd;
     private static float _nextTick;
     private static float _nextLookup;
@@ -127,6 +128,7 @@ internal static class LamaWatcher
         _herd = null;
         Decharmed.Clear();
         Changes.Clear();
+        Walks.Clear();
     }
 
     private static void Visit(HerdingTarget target, float now)
@@ -153,16 +155,36 @@ internal static class LamaWatcher
         if (!lama.IsOwner)
             ModLog.InfoOnce("not-host", "Not the host: the lamas' AI runs on the host's PC, so this mod leaves them alone here.");
 
+        if (Walks.ShouldStop(lama.Id, lama.State, now)) StopStuckWalk(target, lama.Id);
+
         if (!DecharmRule.ShouldDecharm(lama, Decharmed.Contains(lama.Id))) return;
         Decharmed.Add(lama.Id); // before the calls, so a failing decharm is not retried every tick
         try
         {
             var ok = Decharmer.Decharm(target, lama);
+            Walks.Started(lama.Id, now); // forgotten again as soon as the lama is seen in any other state
             ModLog.Info($"lama {lama.Id}: decharmed in the pen (was {lama.State}){(ok ? "" : ", with errors (see the WARN lines above)")}.");
         }
         catch (Exception ex)
         {
             ModLog.ErrorThrottled("decharm", ex, now);
+        }
+    }
+
+    /// <summary>The <see cref="WalkWatchdog"/> fired: the walk-in spot was probably unreachable. Let the lama idle.</summary>
+    private static void StopStuckWalk(HerdingTarget target, int lamaId)
+    {
+        try
+        {
+            ModLog.StepOnce("stuck-walk", "first stuck walk: TransitionToIdleState()");
+            target.TransitionToIdleState();
+            ModLog.StepOnce("stuck-walk-ok", "first stuck walk: TransitionToIdleState() ok");
+            ModLog.Info($"lama {lamaId}: still walking {WalkWatchdog.MaxWalkSeconds:0} s after its decharm, so it was " +
+                        "stopped (its spot was probably unreachable).");
+        }
+        catch (Exception ex)
+        {
+            ModLog.Warn($"lama {lamaId}: stopping a stuck walk failed: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
         }
     }
 }

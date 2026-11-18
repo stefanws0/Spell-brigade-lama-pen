@@ -48,6 +48,29 @@ public class PenSpotTests
     }
 
     [Fact]
+    public void Diagonal_entry_with_a_turn_rotates_the_right_way()
+    {
+        // Enters from the north-east (45 degrees); turnRandom 1 = +60 degrees, so the spot lies at 105 degrees.
+        var lama = new FlatPoint(Center.X + Radius * 0.7071f, Center.Z + Radius * 0.7071f);
+        var spot = PenSpot.Pick(lama, Center, Radius, 0.5f, 1f);
+        var degrees = MathF.Atan2(spot.Z - Center.Z, spot.X - Center.X) * 180f / MathF.PI;
+        Assert.Equal(105f, degrees, 2);
+        Assert.Equal(Radius * 0.30f, DistanceFromCenter(spot), 3);
+    }
+
+    [Fact]
+    public void Random_values_outside_0_to_1_are_clamped()
+    {
+        var lama = new FlatPoint(Center.X + Radius, Center.Z);
+        var low = PenSpot.Pick(lama, Center, Radius, -1f, -1f);
+        var high = PenSpot.Pick(lama, Center, Radius, 2f, 2f);
+        Assert.Equal(Radius * PenSpot.MinFraction, DistanceFromCenter(low), 3);
+        Assert.Equal(Radius * PenSpot.MaxFraction, DistanceFromCenter(high), 3);
+        Assert.Equal(-60f, MathF.Atan2(low.Z - Center.Z, low.X - Center.X) * 180f / MathF.PI, 2);
+        Assert.Equal(60f, MathF.Atan2(high.Z - Center.Z, high.X - Center.X) * 180f / MathF.PI, 2);
+    }
+
+    [Fact]
     public void Lama_exactly_at_the_center_still_gets_a_spot_inside_the_inner_ring()
     {
         var spot = PenSpot.Pick(Center, Center, Radius, 0.5f, 0.5f);

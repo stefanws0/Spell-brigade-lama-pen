@@ -14,6 +14,9 @@ internal static class StateNames
     /// <summary>The short name of the game's follow state (what a charmed lama does while following a wizard).</summary>
     public const string Follow = "Follow";
 
+    /// <summary>The short name of the game's walking state (walking to a target position, then idle).</summary>
+    public const string Walking = "Walking";
+
     public static string Short(string? typeName)
     {
         if (string.IsNullOrEmpty(typeName)) return "none";
