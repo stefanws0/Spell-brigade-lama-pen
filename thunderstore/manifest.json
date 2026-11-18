@@ -1,0 +1,9 @@
+{
+  "name": "Lama_Pen",
+  "version_number": "0.1.0",
+  "website_url": "https://github.com/stefanws0/Spell-brigade-lama-pen",
+  "description": "Charmed lamas in the herding objective lose their charm once they are in the pen, so they stop following you back out. Only the host needs it.",
+  "dependencies": [
+    "BepInEx-BepInExPack_IL2CPP-6.0.788"
+  ]
+}

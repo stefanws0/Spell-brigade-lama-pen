@@ -1,32 +1,26 @@
-# Spell Brigade Lama Pen
+# Lama Pen
 
-A BepInEx 6 (IL2CPP) mod for The Spell Brigade.
+A mod for The Spell Brigade: in the herding objective, a charmed lama loses its charm once it's inside the pen, so it
+stops following you back out. It walks a bit further in and stays there.
 
-In "Herd the Mana Beasts", charmed lamas follow you, so they follow you straight back out of the pen again. With this
-mod, a charmed lama that is inside the pen loses its charm, walks a bit further in, and stays there like a normal
-lama.
+Only the host needs it.
 
-- Automatic: no key to press.
-- Only charmed lamas are changed. Normal lamas behave as the game made them.
-- **Co-op: the host needs the mod.** The lamas' AI runs on the host's PC. On a joining player's PC the mod only
-  watches (and logs); it changes nothing.
-- No game methods are patched.
+Install it from Thunderstore with r2modman or Gale:
+[StrayingFox/Lama_Pen](https://thunderstore.io/c/the-spell-brigade/p/StrayingFox/Lama_Pen/).
 
-## Config
+## Building
 
-`BepInEx/config/com.stefanws0.spellbrigadelamapen.cfg`
+Copy `GamePaths.props.user.example` to `GamePaths.props.user` and point it at your BepInEx folder. Then, with the game
+closed:
 
-- `General.Enabled` (true): turn the mod off without uninstalling it.
-- `Debug.LogLamas` (true): log every lama's state changes to `BepInEx/SpellBrigadeLamaPen.log`.
-- `Debug.TestHotkeys` (true): for testing, as host inside a run. **Ctrl+1** starts a herding objective (when no
-  objective is running); **Ctrl+2** charms that objective's lamas that are still outside the pen. Turn off for normal
-  play.
+```bash
+dotnet build src/SpellBrigadeLamaPen -c Release -p:DeployToGame=true
+```
 
-## Build
+Tests: `dotnet test tests/SpellBrigadeLamaPen.Tests`. Thunderstore zip: `dotnet build src/SpellBrigadeLamaPen -c Release -t:Package`.
 
-Copy `GamePaths.props.user.example` to `GamePaths.props.user` and point it at your BepInEx folder, then:
+## My other mods
 
-    dotnet test tests/SpellBrigadeLamaPen.Tests
-    dotnet build src/SpellBrigadeLamaPen -c Release -p:DeployToGame=true
-
-Deploy only while the game is closed.
+- [Dash](https://github.com/stefanws0/Spell-brigade-dash)
+- [Minimap](https://github.com/stefanws0/Spell-Bridge-Minimap)
+- [Mouse Ping](https://github.com/stefanws0/Spell-brigade-mouse-ping)
