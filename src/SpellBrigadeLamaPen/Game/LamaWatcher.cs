@@ -50,6 +50,7 @@ internal static class LamaWatcher
         _nextLookup = now + LookupSeconds;
         ModLog.StepOnce("lookup", "first FindObjectsOfType<HerdingObjectiveManager>");
         var all = UObject.FindObjectsOfType<HerdingObjectiveManager>();
+        ModLog.StepOnce("lookup-done", "first FindObjectsOfType<HerdingObjectiveManager> done");
         HerdingObjectiveManager? found = null;
         if (all != null)
         {

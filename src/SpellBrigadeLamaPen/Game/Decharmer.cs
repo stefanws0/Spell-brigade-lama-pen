@@ -25,7 +25,6 @@ internal static class Decharmer
             if (animation != null) animation.SetIsLoving(false);
         });
 
-        ModLog.StepOnce("decharm-done", "first decharm done");
         return ok;
     }
 
@@ -35,11 +34,12 @@ internal static class Decharmer
         try
         {
             call();
+            ModLog.StepOnce("decharm-ok " + step, "first decharm: " + step + " ok");
             return true;
         }
         catch (Exception ex)
         {
-            ModLog.Warn($"lama {lamaId}: {step} failed: {ex.GetType().Name}: {ex.Message}");
+            ModLog.Warn($"lama {lamaId}: {step} failed: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
             return false;
         }
     }
