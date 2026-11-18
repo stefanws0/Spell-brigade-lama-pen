@@ -3,7 +3,8 @@
 A BepInEx 6 (IL2CPP) mod for The Spell Brigade.
 
 In "Herd the Mana Beasts", charmed lamas follow you, so they follow you straight back out of the pen again. With this
-mod, a charmed lama that is inside the pen loses its charm and stays there like a normal lama.
+mod, a charmed lama that is inside the pen loses its charm, walks a bit further in, and stays there like a normal
+lama.
 
 - Automatic: no key to press.
 - Only charmed lamas are changed. Normal lamas behave as the game made them.
