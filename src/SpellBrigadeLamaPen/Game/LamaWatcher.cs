@@ -48,12 +48,22 @@ internal static class LamaWatcher
 
         if (now < _nextLookup) return null;
         _nextLookup = now + LookupSeconds;
-        ModLog.StepOnce("lookup", "first FindObjectOfType<HerdingObjectiveManager>");
-        var found = UObject.FindObjectOfType<HerdingObjectiveManager>();
-        if (!Running(found)) return null;
+        ModLog.StepOnce("lookup", "first FindObjectsOfType<HerdingObjectiveManager>");
+        var all = UObject.FindObjectsOfType<HerdingObjectiveManager>();
+        HerdingObjectiveManager? found = null;
+        if (all != null)
+        {
+            for (int i = 0; i < all.Length; i++)
+            {
+                if (!Running(all[i])) continue;
+                found = all[i];
+                break;
+            }
+        }
 
+        if (found == null) return null;
         _herd = found;
-        ModLog.Info($"Herding objective found: {found!.currentHerdingTargets?.Count ?? 0} lama(s).");
+        ModLog.Info("Herding objective found.");
         return _herd;
     }
 
@@ -75,6 +85,7 @@ internal static class LamaWatcher
         {
             ModLog.StepOnce("read", "first read of a HerdingTarget");
             lama = LamaSnapshot.Read(target);
+            ModLog.StepOnce("read-done", "first read of a HerdingTarget done");
         }
         catch (Exception ex)
         {
@@ -95,8 +106,8 @@ internal static class LamaWatcher
         Decharmed.Add(lama.Id); // before the calls, so a failing decharm is not retried every tick
         try
         {
-            Decharmer.Decharm(target, lama);
-            ModLog.Info($"lama {lama.Id}: decharmed in the pen (was {lama.State}).");
+            var ok = Decharmer.Decharm(target, lama);
+            ModLog.Info($"lama {lama.Id}: decharmed in the pen (was {lama.State}){(ok ? "" : ", with errors (see the WARN lines above)")}.");
         }
         catch (Exception ex)
         {
